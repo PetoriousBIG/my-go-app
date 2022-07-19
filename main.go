@@ -60,4 +60,7 @@ func setHandlers(sm *http.ServeMux, l *log.Logger) {
 	// ping
 	ping := handlers.NewPing(l)
 	sm.Handle("/ping", ping)
+
+	//
+
 }
