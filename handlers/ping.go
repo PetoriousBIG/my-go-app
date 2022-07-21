@@ -16,10 +16,11 @@ func NewPing(l *log.Logger) *Ping {
 }
 
 func (p *Ping) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	p.l.Println("Ping")
+	p.l.Println("[DEBUG] Ping!")
 
 	d, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		p.l.Println("[ERROR] pinging")
 		http.Error(rw, "Oops", http.StatusBadRequest)
 		return
 	}
