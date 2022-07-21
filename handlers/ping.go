@@ -15,7 +15,7 @@ func NewPing(l *log.Logger) *Ping {
 	return &Ping{l}
 }
 
-func (p *Ping) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (p *Ping) Get(rw http.ResponseWriter, r *http.Request) {
 	p.l.Println("[DEBUG] Ping!")
 
 	d, err := ioutil.ReadAll(r.Body)

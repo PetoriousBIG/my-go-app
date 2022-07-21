@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/PetoriousBIG/docker-ex/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 	l := log.New(os.Stdout, "my-api ", log.LstdFlags)
 
 	// create a new serve mux and register the handlers
-	sm := http.NewServeMux()
+	sm := mux.NewRouter()
 
 	// create and pass handlers to serve mux
 	setHandlers(sm, l)
@@ -55,12 +56,16 @@ func main() {
 	s.Shutdown(ctx)
 }
 
-func setHandlers(sm *http.ServeMux, l *log.Logger) {
+func setHandlers(sm *mux.Router, l *log.Logger) {
+
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
 
 	// ping
 	ping := handlers.NewPing(l)
-	sm.Handle("/ping", ping)
+	getRouter.HandleFunc("/ping", ping.Get)
 
-	//
+	// get country data
+	countryData := handlers.NewCountryData(l)
+	getRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
 
 }
