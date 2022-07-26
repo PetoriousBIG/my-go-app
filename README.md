@@ -11,7 +11,7 @@ The API utilizes the following endpoint:
 where id is any of the Alpha-3 codes in the csv file.
 
 Testing the API endpoint:
-`curl localhost/At-A-Glance/COS | jq`
+`curl localhost/At-A-Glance/COL | jq`
 
 Should return the following JSON:
 ```
