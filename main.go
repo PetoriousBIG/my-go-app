@@ -9,8 +9,11 @@ import (
 	"time"
 
 	"github.com/PetoriousBIG/docker-ex/handlers"
+	"github.com/PetoriousBIG/docker-ex/util"
 	"github.com/gorilla/mux"
 )
+
+const FILE_PATH = "../countries_codes_and_coordinates.csv"
 
 func main() {
 
@@ -21,6 +24,13 @@ func main() {
 
 	// create and pass handlers to serve mux
 	setHandlers(sm, l)
+
+	// establish the dictionary of countries
+	err := util.ReadCountryCSV(FILE_PATH)
+	if err != nil {
+		l.Printf("Error reading csv: %s\n", err)
+		os.Exit(1)
+	}
 
 	// create a new server
 	s := &http.Server{
@@ -35,7 +45,7 @@ func main() {
 	go func() {
 		l.Println("Starting server on port 9090")
 
-		err := s.ListenAndServe()
+		err = s.ListenAndServe()
 		if err != nil {
 			l.Printf("Error starting server: %s\n", err)
 			os.Exit(1)
