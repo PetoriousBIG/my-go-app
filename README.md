@@ -6,8 +6,20 @@ To build:
 To run:
 `docker run -p 9090:9090 go-multi-stage`
 
-Then open a browser to:
-`localhost:9090/ping`
+The API utilizes the following endpoint: 
+`/At-A-Glance/{id:[A-Z]{3}}`
+where id is any of the Alpha-3 codes in the csv file.
 
-And you should see:
-`Pong`
+Testing the API endpoint:
+`curl localhost/At-A-Glance/COS | jq`
+
+Should return the following JSON:
+```
+{
+  "country": "COL",
+  "country_name": "Colombia",
+  "country_id": 170,
+  "average_latitude": 4,
+  "average_longitude": -72
+}
+```
