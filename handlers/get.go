@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/PetoriousBIG/docker-ex/data"
+	"github.com/gorilla/mux"
 )
 
 type countryData struct {
@@ -17,8 +18,11 @@ func NewCountryData(l *log.Logger) *countryData {
 
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	c.l.Println("[DEBUG] Get Country Data")
+	params := mux.Vars(r)
+	countryCode := params["id"]
+	c.l.Println("[DEBUG] Get Country Data")
 
-	cd := data.GetCountryData()
+	cd := data.CountryDictionary[countryCode]
 
 	err := cd.ToJSON(rw)
 	if err != nil {
