@@ -20,7 +20,6 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	c.l.Println("[DEBUG] Get Country Data")
 	params := mux.Vars(r)
 	countryCode := params["id"]
-	c.l.Println("[DEBUG] Get Country Data")
 
 	cd := data.CountryDictionary[countryCode]
 

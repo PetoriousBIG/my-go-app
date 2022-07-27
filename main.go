@@ -78,6 +78,7 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 	// get country data
 	countryData := handlers.NewCountryData(l)
 	getRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
+	getRouter.Use(countryData.MiddlewareValidateCountry)
 
 	// not found
 	sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
