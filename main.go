@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -77,5 +78,16 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 	// get country data
 	countryData := handlers.NewCountryData(l)
 	getRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
+
+	// not found
+	sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		l.Println("[DEBUG] resource not found", r.URL.Path)
+
+		rw.WriteHeader(http.StatusNotFound)
+		rw.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(rw).Encode(map[string]interface{}{
+			"message": "resource not found",
+		})
+	})
 
 }
