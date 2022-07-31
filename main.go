@@ -16,6 +16,8 @@ import (
 
 const FILE_PATH = "../countries_codes_and_coordinates.csv"
 
+var PORT = os.Getenv("env_port")
+
 func main() {
 
 	l := log.New(os.Stdout, "my-api ", log.LstdFlags)
@@ -33,9 +35,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	portArg := ":" + PORT
+
 	// create a new server
 	s := &http.Server{
-		Addr:         ":9090",
+		Addr:         portArg,
 		Handler:      sm,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  5 * time.Second,
@@ -44,7 +48,7 @@ func main() {
 
 	// start the server
 	go func() {
-		l.Println("Starting server on port 9090")
+		l.Println("Starting server on port", PORT)
 
 		err = s.ListenAndServe()
 		if err != nil {
