@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/PetoriousBIG/docker-ex/data"
+	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/gorilla/mux"
 )
 
