@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/PetoriousBIG/docker-ex/handlers"
-	"github.com/PetoriousBIG/docker-ex/util"
+	"github.com/PetoriousBIG/my-go-app/handlers"
+	"github.com/PetoriousBIG/my-go-app/util"
 	"github.com/gorilla/mux"
 )
 
@@ -69,15 +69,17 @@ func main() {
 
 func setHandlers(sm *mux.Router, l *log.Logger) {
 
-	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	pingRouter := sm.Methods(http.MethodGet).Subrouter()
+	apiRouter := sm.Methods(http.MethodGet).Subrouter()
 
 	// ping
 	ping := handlers.NewPing(l)
-	getRouter.HandleFunc("/ping", ping.Get)
+	pingRouter.HandleFunc("/ping", ping.Get)
 
 	// get country data
 	countryData := handlers.NewCountryData(l)
-	getRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
+	apiRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
+	apiRouter.Use(countryData.MiddlewareValidateCountry)
 
 	// not found
 	sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {

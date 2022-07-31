@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/PetoriousBIG/docker-ex/data"
+	"github.com/PetoriousBIG/my-go-app/data"
 )
 
 func ReadCountryCSV(filepath string) error {

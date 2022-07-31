@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/PetoriousBIG/docker-ex/data"
+	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/gorilla/mux"
 )
 
@@ -17,10 +17,10 @@ func NewCountryData(l *log.Logger) *countryData {
 }
 
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
-	c.l.Println("[DEBUG] Get Country Data")
 	params := mux.Vars(r)
 	countryCode := params["id"]
-	c.l.Println("[DEBUG] Get Country Data")
+
+	c.l.Println("[DEBUG] Get Country Data", countryCode)
 
 	cd := data.CountryDictionary[countryCode]
 
