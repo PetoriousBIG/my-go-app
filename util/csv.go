@@ -2,6 +2,8 @@ package util
 
 import (
 	"encoding/csv"
+	"errors"
+	"io"
 	"os"
 	"strconv"
 
@@ -15,15 +17,7 @@ func ReadCountryCSV(filepath string) error {
 	}
 	defer f.Close()
 
-	csvReader := csv.NewReader(f)
-	csvReader.LazyQuotes = true
-
-	_, err = csvReader.Read() // skip first line
-	if err != nil {
-		return err
-	}
-
-	records, err := csvReader.ReadAll()
+	records, err := readFile(f)
 	if err != nil {
 		return err
 	}
@@ -36,9 +30,32 @@ func ReadCountryCSV(filepath string) error {
 	return nil
 }
 
+func readFile(reader io.Reader) ([][]string, error) {
+	r := csv.NewReader(reader)
+	r.LazyQuotes = true
+
+	lines, err := r.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return lines, nil
+
+}
+
 func writeCountryDictionary(records [][]string) error {
 
+	numRows := len(records)
+	if numRows < 1 {
+		return errors.New("no rows in csv found")
+	}
+
 	for _, row := range records {
+
+		numCols := len(row)
+		if numCols != 6 {
+			return errors.New("incorrect number of fields found in row")
+		}
 
 		name := row[0]
 
