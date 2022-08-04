@@ -28,13 +28,6 @@ func main() {
 	// create and pass handlers to serve mux
 	setHandlers(sm, l)
 
-	// establish the dictionary of countries
-	err := util.ReadCountryCSV(FILE_PATH)
-	if err != nil {
-		l.Printf("Error reading csv: %s\n", err)
-		os.Exit(1)
-	}
-
 	portArg := ":" + PORT
 
 	// create a new server
@@ -50,7 +43,7 @@ func main() {
 	go func() {
 		l.Println("Starting server on port", PORT)
 
-		err = s.ListenAndServe()
+		err := s.ListenAndServe()
 		if err != nil {
 			l.Printf("Error starting server: %s\n", err)
 			os.Exit(1)
@@ -83,7 +76,12 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 	// get country data
 	countryData := handlers.NewCountryData(l)
 	apiRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
-	apiRouter.Use(countryData.MiddlewareValidateCountry)
+	dict, err := util.ReadCountryCSV(FILE_PATH)
+	if err != nil {
+		l.Printf("Error reading csv: %s\n", err)
+		os.Exit(1)
+	}
+	apiRouter.Use(countryData.GetMiddlewareValidateCountryFunc(dict))
 
 	// not found
 	sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -95,5 +93,4 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 			"message": "resource not found",
 		})
 	})
-
 }

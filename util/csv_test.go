@@ -41,10 +41,10 @@ func Test_WriteCountryDictionaryNoError(t *testing.T) {
 		{"Cataland", "CL", "CTL", "9", "9", "9"},
 	}
 
-	err := writeCountryDictionary(given)
+	cd, err := validateCountryDictionary(given)
 
 	assert.Nil(t, err)
-	assert.Equal(t, expected, data.CountryDictionary)
+	assert.Equal(t, expected, cd)
 }
 
 func Test_WriteCountryDictionaryIndexOutOfBoundsError(t *testing.T) {
@@ -52,16 +52,18 @@ func Test_WriteCountryDictionaryIndexOutOfBoundsError(t *testing.T) {
 		{"Not enough fields"},
 		{"Not enough fields 2"},
 	}
-	err := writeCountryDictionary(given)
+	cd, err := validateCountryDictionary(given)
 	assert.NotNil(t, err)
 	assert.EqualError(t, err, "incorrect number of fields found in row")
+	assert.Nil(t, cd)
 }
 
 func Test_WriteCountryDictionaryNoRowsError(t *testing.T) {
 	given := [][]string{}
-	err := writeCountryDictionary(given)
+	cd, err := validateCountryDictionary(given)
 	assert.NotNil(t, err)
 	assert.EqualError(t, err, "no rows in csv found")
+	assert.Nil(t, cd)
 }
 
 func Test_WriteCountryDictionaryIntegerConversionError(t *testing.T) {
@@ -69,9 +71,10 @@ func Test_WriteCountryDictionaryIntegerConversionError(t *testing.T) {
 		{"", "", "", "invalid", "", ""},
 	}
 	expected := "strconv.Atoi: parsing \"invalid\": invalid syntax"
-	err := writeCountryDictionary(given)
+	cd, err := validateCountryDictionary(given)
 	assert.NotNil(t, err)
 	assert.EqualError(t, err, expected)
+	assert.Nil(t, cd)
 }
 
 func Test_WriteCountryDictionaryFloatConversionError(t *testing.T) {
@@ -79,7 +82,8 @@ func Test_WriteCountryDictionaryFloatConversionError(t *testing.T) {
 		{"", "", "", "0", "invalid", "0"},
 	}
 	expected := "strconv.ParseFloat: parsing \"invalid\": invalid syntax"
-	err := writeCountryDictionary(given)
+	cd, err := validateCountryDictionary(given)
 	assert.NotNil(t, err)
 	assert.EqualError(t, err, expected)
+	assert.Nil(t, cd)
 }

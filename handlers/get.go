@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/PetoriousBIG/my-go-app/data"
+	"github.com/PetoriousBIG/my-go-app/util"
 	"github.com/gorilla/mux"
 )
 
@@ -22,9 +22,9 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 
 	c.l.Println("[DEBUG] Get Country Data", countryCode)
 
-	cd := data.CountryDictionary[countryCode]
+	header := r.Context().Value("header")
 
-	err := cd.ToJSON(rw)
+	err := util.ToJSON(header, rw)
 	if err != nil {
 		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
 	}
