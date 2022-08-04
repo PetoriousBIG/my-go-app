@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
-	"io"
 	"log"
 	"net/http"
+
+	"github.com/PetoriousBIG/my-go-app/util"
 )
 
 type Ping struct {
@@ -24,14 +24,8 @@ func (p *Ping) Get(rw http.ResponseWriter, r *http.Request) {
 
 	response := PingResponse{"Pong!"}
 
-	err := response.ToJSON(rw)
+	err := util.ToJSON(response, rw)
 	if err != nil {
 		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
 	}
-}
-
-func (pr *PingResponse) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-
-	return e.Encode(pr)
 }
