@@ -12,9 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// basic test to make sure the middleware is correctly utilizing the
-// country dictionary to verify URL params.
-func Test_GetMiddlewareValidateCountryFuncNoError(t *testing.T) {
+func Test_GetMiddlewareValidateCountryFuncGoodParam(t *testing.T) {
 
 	//setup - building a country dictionary
 	chTST := data.CountryHeader{"TST", "Testland", 1, 0, 0}
@@ -36,20 +34,22 @@ func Test_GetMiddlewareValidateCountryFuncNoError(t *testing.T) {
 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 	c := NewCountryData(l)
 
-	//setup - passing
+	//setup - grabbing the functions we're testing
 	function := c.GetMiddlewareValidateCountryFunc(&cd)
 	out := function(nextHandler)
 
+	//setup - creating URL parameters
 	req := httptest.NewRequest("GET", "/", nil)
 	vars := map[string]string{
 		"id": "TST",
 	}
 	req = mux.SetURLVars(req, vars)
 
+	//call nextHandler, which will perform assertions
 	out.ServeHTTP(httptest.NewRecorder(), req)
 }
 
-func Test_GetMiddlewareValidateCountryFuncNotFoundError(t *testing.T) {
+func Test_GetMiddlewareValidateCountryFuncBadParam(t *testing.T) {
 
 	//setup - building a country dictionary
 	chNEW := data.CountryHeader{"NEW", "Newland", 2, 1, 1}
@@ -69,15 +69,17 @@ func Test_GetMiddlewareValidateCountryFuncNotFoundError(t *testing.T) {
 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 	c := NewCountryData(l)
 
-	//setup - passing
+	//setup - grabbing the functions we're testing
 	function := c.GetMiddlewareValidateCountryFunc(&cd)
 	out := function(nextHandler)
 
+	//setup - creating URL parameters
 	req := httptest.NewRequest("GET", "/", nil)
 	vars := map[string]string{
 		"id": "TST",
 	}
 	req = mux.SetURLVars(req, vars)
 
+	//call nextHandler, which will perform assertions
 	out.ServeHTTP(httptest.NewRecorder(), req)
 }
