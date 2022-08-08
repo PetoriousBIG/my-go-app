@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/PetoriousBIG/my-go-app/util"
-	"github.com/gorilla/mux"
 )
 
 type countryData struct {
@@ -17,12 +16,8 @@ func NewCountryData(l *log.Logger) *countryData {
 }
 
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	countryCode := params["id"]
-
-	c.l.Println("[DEBUG] Get Country Data", countryCode)
-
 	header := r.Context().Value("header")
+	c.l.Println("[DEBUG] Get Country Data", header)
 
 	err := util.ToJSON(header, rw)
 	if err != nil {
