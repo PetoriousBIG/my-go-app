@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/PetoriousBIG/my-go-app/util"
 )
 
@@ -16,11 +19,28 @@ func NewCountryData(l *log.Logger) *countryData {
 }
 
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
-	header := r.Context().Value("header")
-	c.l.Println("[DEBUG] Get Country Data", header)
+	v := fmt.Sprintf("%v", r.Context().Value("valid"))
+	cd := r.Context().Value("header")
+	c.l.Println("[DEBUG] Getting country data", cd)
 
-	err := util.ToJSON(header, rw)
+	rw.Header().Add("Content-Type", "application/json")
+
+	var response data.ApiError
+
+	isValid, err := strconv.ParseBool(v)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		c.l.Println("[ERROR] parsing boolean", err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		response = data.ApiError{"internal error"}
 	}
+
+	if isValid {
+
+	} else {
+		c.l.Println("[DEBUG] country not found", cd)
+		rw.WriteHeader(http.StatusNotFound)
+		response = data.ApiError{fmt.Sprintf("country not found, %v", cd)}
+	}
+
+	util.ToJSON(response, rw)
 }

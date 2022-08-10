@@ -18,10 +18,10 @@ func (c *countryData) GetMiddlewareValidateCountryFunc(dict *data.CountryDiction
 			var ctx context.Context
 			if ok {
 				ctx = context.WithValue(r.Context(), "header", header)
-				ctx = context.WithValue(ctx, "valid", "yes")
+				ctx = context.WithValue(ctx, "valid", true)
 
 			} else {
-				ctx = context.WithValue(r.Context(), "valid", "no")
+				ctx = context.WithValue(r.Context(), "valid", false)
 			}
 			next.ServeHTTP(rw, r.WithContext(ctx))
 		})

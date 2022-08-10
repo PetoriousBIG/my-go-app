@@ -27,7 +27,7 @@ func Test_GetMiddlewareValidateCountryFuncGoodParam(t *testing.T) {
 		header := r.Context().Value("header")
 		valid := r.Context().Value("valid")
 		assert.Equal(t, cd.Dict["TST"], header)
-		assert.Equal(t, "yes", valid)
+		assert.Equal(t, true, valid)
 	})
 
 	//setup - dependencies to calling GetMiddlewareValidateCountryFunc
@@ -62,7 +62,7 @@ func Test_GetMiddlewareValidateCountryFuncBadParam(t *testing.T) {
 		header := r.Context().Value("header")
 		valid := r.Context().Value("valid")
 		assert.Nil(t, header)
-		assert.Equal(t, "no", valid)
+		assert.Equal(t, false, valid)
 	})
 
 	//setup - dependencies to calling GetMiddlewareValidateCountryFunc
