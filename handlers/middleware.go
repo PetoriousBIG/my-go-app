@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/PetoriousBIG/my-go-app/data"
@@ -16,20 +15,15 @@ func (c *countryData) GetMiddlewareValidateCountryFunc(dict *data.CountryDiction
 			params := mux.Vars(r)
 			countryCode := params["id"]
 			header, ok := dict.Dict[countryCode]
-			if !ok {
-				c.l.Println("[ERROR] country not found")
+			var ctx context.Context
+			if ok {
+				ctx = context.WithValue(r.Context(), "header", header)
+				ctx = context.WithValue(ctx, "valid", true)
 
-				rw.WriteHeader(http.StatusBadRequest)
-				json.NewEncoder(rw).Encode(map[string]interface{}{
-					"message":  "resource not found",
-					"endpoint": countryCode,
-				})
-				return
+			} else {
+				ctx = context.WithValue(r.Context(), "valid", false)
 			}
-
-			ctx := context.WithValue(r.Context(), "header", header)
 			next.ServeHTTP(rw, r.WithContext(ctx))
-
 		})
 	}
 	return mw

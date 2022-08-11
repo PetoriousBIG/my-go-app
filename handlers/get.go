@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/PetoriousBIG/my-go-app/util"
-	"github.com/gorilla/mux"
 )
 
 type countryData struct {
@@ -17,15 +19,29 @@ func NewCountryData(l *log.Logger) *countryData {
 }
 
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	countryCode := params["id"]
+	v := fmt.Sprintf("%v", r.Context().Value("valid"))
+	cd := r.Context().Value("header")
 
-	c.l.Println("[DEBUG] Get Country Data", countryCode)
+	rw.Header().Add("Content-Type", "application/json")
 
-	header := r.Context().Value("header")
+	var response any
 
-	err := util.ToJSON(header, rw)
+	isValid, err := strconv.ParseBool(v)
 	if err != nil {
-		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+		c.l.Println("[ERROR] parsing boolean", err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		response = data.ApiError{"internal error"}
 	}
+
+	if isValid {
+		c.l.Println("[DEBUG] getting country data", cd)
+		rw.WriteHeader(http.StatusOK)
+		response = cd
+	} else {
+		c.l.Println("[DEBUG] country not found", cd)
+		rw.WriteHeader(http.StatusNotFound)
+		response = data.ApiError{fmt.Sprintf("country not found, %v", cd)}
+	}
+
+	util.ToJSON(response, rw)
 }
