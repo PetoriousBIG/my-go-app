@@ -21,11 +21,10 @@ func NewCountryData(l *log.Logger) *countryData {
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	v := fmt.Sprintf("%v", r.Context().Value("valid"))
 	cd := r.Context().Value("header")
-	c.l.Println("[DEBUG] Getting country data", cd)
 
 	rw.Header().Add("Content-Type", "application/json")
 
-	var response data.ApiError
+	var response any
 
 	isValid, err := strconv.ParseBool(v)
 	if err != nil {
@@ -35,7 +34,9 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	if isValid {
-
+		c.l.Println("[DEBUG] getting country data", cd)
+		rw.WriteHeader(http.StatusOK)
+		response = cd
 	} else {
 		c.l.Println("[DEBUG] country not found", cd)
 		rw.WriteHeader(http.StatusNotFound)

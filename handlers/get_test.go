@@ -16,19 +16,22 @@ import (
 func Test_GetCountryDataWithValidCountry(t *testing.T) {
 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 	c := NewCountryData(l)
+	expectedHeader := data.CountryHeader{"TST", "Testland", 1, 0, 0}
 
 	req := httptest.NewRequest("GET", "/", nil)
 	ctx := req.Context()
 	ctx = context.WithValue(ctx, "valid", true)
-	ctx = context.WithValue(ctx, "header", "test")
+	ctx = context.WithValue(ctx, "header", expectedHeader)
 
 	out := httptest.NewRecorder()
 	c.GetCountryData(out, req.WithContext(ctx))
 
 	actualStatus := out.Result().StatusCode
-	actualHeader := string(out.Body.Bytes())
+	var actualHeader data.CountryHeader
+	util.FromJSON(&actualHeader, out.Body)
+
 	assert.Equal(t, http.StatusOK, actualStatus)
-	assert.Equal(t, "test", actualHeader)
+	assert.Equal(t, expectedHeader, actualHeader)
 
 }
 
