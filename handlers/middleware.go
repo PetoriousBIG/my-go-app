@@ -15,9 +15,10 @@ func (c *countryData) GetMiddlewareValidateCountryFunc(dict *data.CountryDiction
 			params := mux.Vars(r)
 			countryCode := params["id"]
 			header, ok := dict.Dict[countryCode]
+
 			var ctx context.Context
+			ctx = context.WithValue(r.Context(), "header", header)
 			if ok {
-				ctx = context.WithValue(r.Context(), "header", header)
 				ctx = context.WithValue(ctx, "valid", true)
 
 			} else {
