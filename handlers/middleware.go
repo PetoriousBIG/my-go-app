@@ -9,7 +9,7 @@ import (
 )
 
 func (c *countryData) GetMiddlewareValidateCountryFunc(dict *data.CountryDictionary) func(http.Handler) http.Handler {
-	mw := func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 			rw.Header().Add("Content-Type", "application/json")
 			params := mux.Vars(r)
@@ -18,14 +18,8 @@ func (c *countryData) GetMiddlewareValidateCountryFunc(dict *data.CountryDiction
 
 			var ctx context.Context
 			ctx = context.WithValue(r.Context(), "header", header)
-			if ok {
-				ctx = context.WithValue(ctx, "valid", true)
-
-			} else {
-				ctx = context.WithValue(r.Context(), "valid", false)
-			}
+			ctx = context.WithValue(ctx, "valid", ok)
 			next.ServeHTTP(rw, r.WithContext(ctx))
 		})
 	}
-	return mw
 }
