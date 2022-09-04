@@ -38,8 +38,8 @@ func Test_GetCountryDataWithValidCountry(t *testing.T) {
 func Test_GetCountryDataWithInvalidCountry(t *testing.T) {
 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 	c := NewCountryData(l)
-	arg := data.CountryHeader{"TST", "Testland", 1, 0, 0}
-	expectedHeader := data.ApiError{"country not found, {TST Testland 1 0 0}"}
+	arg := data.CountryHeader{"", "", 0, 0, 0}
+	expectedHeader := data.ApiError{"country ALPHA-3, , not found"}
 
 	req := httptest.NewRequest("GET", "/", nil)
 	ctx := req.Context()

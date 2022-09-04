@@ -42,9 +42,9 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Add("Content-Type", "application/json")
 		params := mux.Vars(r)
 		countryCode := params["id"]
-		c.l.Println("[DEBUG] country ALPHA-3, %v, not found", countryCode)
+		c.l.Println("[DEBUG] country ALPHA-3 not found", countryCode)
 		rw.WriteHeader(http.StatusNotFound)
-		response = data.ApiError{fmt.Sprintf("country ALPHA-3, %v, not found", countryCode)}
+		response = data.ApiError{fmt.Sprintf("country ALPHA-3, %s, not found", countryCode)}
 	}
 
 	util.ToJSON(response, rw)
