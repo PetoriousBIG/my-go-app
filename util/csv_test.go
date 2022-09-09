@@ -34,8 +34,8 @@ func Test_ReadCountryCSVError(t *testing.T) {
 
 func Test_WriteCountryDictionaryNoError(t *testing.T) {
 	expected := make(map[string]data.CountryHeader)
-	expected["PTL"] = data.CountryHeader{"PTL", "Peterland", 0, 0, 0}
-	expected["CTL"] = data.CountryHeader{"CTL", "Cataland", 9, 9, 9}
+	expected["PTL"] = data.CountryHeader{"PTL", "Peterland", "PL", 0, 0, 0}
+	expected["CTL"] = data.CountryHeader{"CTL", "Cataland", "CL", 9, 9, 9}
 	given := [][]string{
 		{"Peterland", "PL", "PTL", "0", "0", "0"},
 		{"Cataland", "CL", "CTL", "9", "9", "9"},

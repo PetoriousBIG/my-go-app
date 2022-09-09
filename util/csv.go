@@ -10,7 +10,7 @@ import (
 	"github.com/PetoriousBIG/my-go-app/data"
 )
 
-func ReadCountryCSV(filepath string) (*data.CountryDictionary, error) {
+func ReadCountryCSV(filepath string) (*map[string]data.CountryHeader, error) {
 	f, err := os.Open(filepath)
 	if err != nil {
 		return nil, err
@@ -22,12 +22,31 @@ func ReadCountryCSV(filepath string) (*data.CountryDictionary, error) {
 		return nil, err
 	}
 
-	cd, err := validateCountryDictionary(records)
+	dict, err := validateCountryDictionary(records)
 	if err != nil {
 		return nil, err
 	}
 
-	dict := data.CountryDictionary{cd}
+	return &dict, nil
+}
+
+func ReadCurrencyCSV(filepath string) (*map[string]data.CurrencyCode, error) {
+	f, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	records, err := readFile(f)
+	if err != nil {
+		return nil, err
+	}
+
+	dict, err := validateCurrencyDictionary(records)
+	if err != nil {
+		return nil, err
+	}
+
 	return &dict, nil
 }
 
@@ -46,7 +65,7 @@ func readFile(reader io.Reader) ([][]string, error) {
 
 func validateCountryDictionary(records [][]string) (map[string]data.CountryHeader, error) {
 
-	cd := make(map[string]data.CountryHeader)
+	countries := make(map[string]data.CountryHeader)
 
 	numRows := len(records)
 	if numRows < 1 {
@@ -78,9 +97,36 @@ func validateCountryDictionary(records [][]string) (map[string]data.CountryHeade
 		}
 
 		alpha3Code := row[2]
-		cd[alpha3Code] = data.CountryHeader{alpha3Code, name, id, lat, long}
+		alpha2Code := row[1]
+		countries[alpha3Code] = data.CountryHeader{alpha3Code, name, alpha2Code, id, lat, long}
 
 	}
 
-	return cd, nil
+	return countries, nil
+}
+
+func validateCurrencyDictionary(records [][]string) (map[string]data.CurrencyCode, error) {
+	currencyCodes := make(map[string]data.CurrencyCode)
+
+	numRows := len(records)
+	if numRows < 1 {
+		return nil, errors.New("no rows in csv found")
+	}
+
+	for _, row := range records {
+
+		numCols := len(row)
+		if numCols != 4 {
+			return nil, errors.New("incorrect number of fields found in row")
+		}
+
+		name := row[0]
+		alpha2Code := row[1]
+		currencyName := row[2]
+		currencyCode := row[3]
+		currencyCodes[alpha2Code] = data.CurrencyCode{name, alpha2Code, currencyName, currencyCode}
+
+	}
+
+	return currencyCodes, nil
 }

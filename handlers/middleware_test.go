@@ -15,18 +15,25 @@ import (
 func Test_GetMiddlewareValidateCountryFuncGoodParam(t *testing.T) {
 
 	//setup - building a country dictionary
-	chTST := data.CountryHeader{"TST", "Testland", 1, 0, 0}
-	chNEW := data.CountryHeader{"NEW", "Newland", 2, 1, 1}
-	testmap := make(map[string]data.CountryHeader)
-	testmap[chTST.Key] = chTST
-	testmap[chNEW.Key] = chNEW
-	cd := data.CountryDictionary{testmap}
+	chTST := data.CountryHeader{"TST", "Testland", "TS", 1, 0, 0}
+	chNEW := data.CountryHeader{"NEW", "Newland", "NL", 2, 1, 1}
+	headers := make(map[string]data.CountryHeader)
+
+	headers[chTST.Key] = chTST
+	headers[chNEW.Key] = chNEW
+
+	//setup - building a currency dictionary
+	curTST := data.CurrencyCode{"Testland", "TS", "Testland Dollars", "TSD"}
+	curNEW := data.CurrencyCode{"Newland", "NL", "Newland Dollars", "NLD"}
+	currencyCodes := make(map[string]data.CurrencyCode)
+	currencyCodes[curTST.Alpha2Code] = curTST
+	currencyCodes[curNEW.Alpha2Code] = curNEW
 
 	//setup - HTTP handler func that will make assertions
 	nextHandler := http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		header := r.Context().Value("header")
 		valid := r.Context().Value("valid")
-		assert.Equal(t, cd.Dict["TST"], header)
+		assert.Equal(t, headers["TST"], header)
 		assert.Equal(t, true, valid)
 	})
 
@@ -35,7 +42,7 @@ func Test_GetMiddlewareValidateCountryFuncGoodParam(t *testing.T) {
 	c := NewCountryData(l)
 
 	//setup - grabbing the functions we're testing
-	function := c.GetMiddlewareValidateCountryFunc(&cd)
+	function := c.GetMiddlewareValidateCountryFunc(headers, currencyCodes)
 	out := function(nextHandler)
 
 	//setup - creating URL parameters
@@ -52,10 +59,14 @@ func Test_GetMiddlewareValidateCountryFuncGoodParam(t *testing.T) {
 func Test_GetMiddlewareValidateCountryFuncBadParam(t *testing.T) {
 
 	//setup - building a country dictionary
-	chNEW := data.CountryHeader{"NEW", "Newland", 2, 1, 1}
-	testmap := make(map[string]data.CountryHeader)
-	testmap[chNEW.Key] = chNEW
-	cd := data.CountryDictionary{testmap}
+	chNEW := data.CountryHeader{"NEW", "Newland", "NL", 2, 1, 1}
+	headers := make(map[string]data.CountryHeader)
+	headers[chNEW.Key] = chNEW
+
+	//setup - building a currency dictionary
+	curNEW := data.CurrencyCode{"Newland", "NL", "Newland Dollars", "NLD"}
+	currencyCodes := make(map[string]data.CurrencyCode)
+	currencyCodes[curNEW.Alpha2Code] = curNEW
 
 	//setup - HTTP handler func that will make assertions
 	nextHandler := http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -70,7 +81,7 @@ func Test_GetMiddlewareValidateCountryFuncBadParam(t *testing.T) {
 	c := NewCountryData(l)
 
 	//setup - grabbing the functions we're testing
-	function := c.GetMiddlewareValidateCountryFunc(&cd)
+	function := c.GetMiddlewareValidateCountryFunc(headers, currencyCodes)
 	out := function(nextHandler)
 
 	//setup - creating URL parameters

@@ -14,7 +14,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const FILE_PATH = "../countries_codes_and_coordinates.csv"
+const HEADER_FILE_PATH = "./countries_codes_and_coordinates.csv"
+const CURRENCY_FILE_PATH = "./country-code-to-currency-mapping.csv"
 
 var PORT = os.Getenv("env_port")
 
@@ -76,12 +77,18 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 	// get country data
 	countryData := handlers.NewCountryData(l)
 	apiRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
-	dict, err := util.ReadCountryCSV(FILE_PATH)
+	headers, err := util.ReadCountryCSV(HEADER_FILE_PATH)
 	if err != nil {
 		l.Printf("Error reading csv: %s\n", err)
 		os.Exit(1)
 	}
-	apiRouter.Use(countryData.GetMiddlewareValidateCountryFunc(dict))
+
+	currencyCodes, err := util.ReadCurrencyCSV(CURRENCY_FILE_PATH)
+	if err != nil {
+		l.Printf("Error reading csv: %s\n", err)
+		os.Exit(1)
+	}
+	apiRouter.Use(countryData.GetMiddlewareValidateCountryFunc(*headers, *currencyCodes))
 
 	// not found
 	sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
