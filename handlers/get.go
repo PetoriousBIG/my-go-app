@@ -20,7 +20,6 @@ func NewCountryData(l *log.Logger) *countryData {
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	valid := r.Context().Value("valid").(bool)
 	header := r.Context().Value("header").(data.CountryHeader)
-	currency := r.Context().Value("currency").(data.CurrencyCode)
 
 	rw.Header().Add("Content-Type", "application/json")
 
@@ -29,6 +28,7 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	if valid {
 		c.l.Println("[DEBUG] getting country data", header)
 		rw.WriteHeader(http.StatusOK)
+		currency := r.Context().Value("currency").(data.CurrencyCode)
 		response = apiMashup(header, currency)
 	} else {
 		c.l.Println("[DEBUG] country not found", header)

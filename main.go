@@ -83,6 +83,7 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 		os.Exit(1)
 	}
 
+	// get currency data
 	currencyCodes, err := util.ReadCurrencyCSV(CURRENCY_FILE_PATH)
 	if err != nil {
 		l.Printf("Error reading csv: %s\n", err)
