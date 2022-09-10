@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/PetoriousBIG/my-go-app/clients"
 	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/PetoriousBIG/my-go-app/util"
 )
@@ -20,29 +19,33 @@ func NewCountryData(l *log.Logger) *countryData {
 
 func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 	valid := r.Context().Value("valid").(bool)
-	ch := r.Context().Value("header").(data.CountryHeader)
+	header := r.Context().Value("header").(data.CountryHeader)
+	currency := r.Context().Value("currency").(data.CurrencyCode)
 
 	rw.Header().Add("Content-Type", "application/json")
 
 	var response any
 
 	if valid {
-		c.l.Println("[DEBUG] getting country data", ch)
+		c.l.Println("[DEBUG] getting country data", header)
 		rw.WriteHeader(http.StatusOK)
-		response = apiMashup(ch)
+		response = apiMashup(header, currency)
 	} else {
-		c.l.Println("[DEBUG] country not found", ch)
+		c.l.Println("[DEBUG] country not found", header)
 		rw.WriteHeader(http.StatusNotFound)
-		response = data.ApiError{fmt.Sprintf("country not found, %v", ch)}
+		response = data.ApiError{fmt.Sprintf("country not found, %v", header)}
 	}
 
 	util.ToJSON(response, rw)
 }
 
-func apiMashup(ch data.CountryHeader) any {
-	base := ch.Key
-	finance := clients.NewFinacne(base)
-	retval := finance.GET()
-	fmt.Printf("%v", retval)
-	return nil
+func apiMashup(ch data.CountryHeader, cc data.CurrencyCode) *data.AtAGlance {
+
+	//base := cc.Alpha2Code
+	//finance := clients.NewFinacne(base)
+	//retval := finance.GET()
+
+	output := data.AtAGlance{ch}
+
+	return &output
 }
