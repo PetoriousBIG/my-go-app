@@ -12,6 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var chTST = data.CountryHeader{"TST", "Testland", 1, 0, 0}
+var chNEW = data.CountryHeader{"NEW", "Newland", 2, 1, 1}
+var empty = data.CountryHeader{"", "", 0, 0, 0}
+
 func Test_GetMiddlewareValidateCountryFuncGoodParam(t *testing.T) {
 
 	//setup - building a country dictionary
@@ -68,11 +72,12 @@ func Test_GetMiddlewareValidateCountryFuncBadParam(t *testing.T) {
 	currencyCodes := make(map[string]data.CurrencyCode)
 	currencyCodes[curNEW.Alpha2Code] = curNEW
 
+
 	//setup - HTTP handler func that will make assertions
 	nextHandler := http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		header := r.Context().Value("header")
 		valid := r.Context().Value("valid")
-		assert.Nil(t, header)
+		assert.Equal(t, empty, header)
 		assert.Equal(t, false, valid)
 	})
 

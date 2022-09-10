@@ -8,6 +8,7 @@ import (
 	"github.com/PetoriousBIG/my-go-app/clients"
 	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/PetoriousBIG/my-go-app/util"
+	"github.com/gorilla/mux"
 )
 
 type countryData struct {
@@ -35,6 +36,7 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 		c.l.Println("[DEBUG] country not found", header)
 		rw.WriteHeader(http.StatusNotFound)
 		response = data.ApiError{fmt.Sprintf("country not found, %v", header)}
+
 	}
 
 	util.ToJSON(response, rw)

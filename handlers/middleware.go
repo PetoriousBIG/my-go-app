@@ -34,5 +34,4 @@ func (c *countryData) GetMiddlewareValidateCountryFunc(headers map[string]data.C
 			next.ServeHTTP(rw, r.WithContext(ctx))
 		})
 	}
-	return mw
 }

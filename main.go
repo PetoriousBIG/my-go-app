@@ -98,7 +98,7 @@ func setHandlers(sm *mux.Router, l *log.Logger) {
 		rw.WriteHeader(http.StatusNotFound)
 		rw.Header().Add("Content-Type", "application/json")
 		json.NewEncoder(rw).Encode(map[string]interface{}{
-			"message": "resource not found",
+			"error": "resource does not exist",
 		})
 	})
 }
