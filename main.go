@@ -15,7 +15,7 @@ import (
 )
 
 const HEADER_FILE_PATH = "./countries_codes_and_coordinates.csv"
-const CURRENCY_FILE_PATH = "./country-code-to-currency-mapping.csv"
+const CURRENCY_FILE_PATH = "./country-code-to-currency-code-mapping.csv"
 
 var PORT = os.Getenv("env_port")
 

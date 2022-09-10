@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/PetoriousBIG/my-go-app/data"
 )
 
 type finance struct {
@@ -14,7 +16,7 @@ func NewFinacne(bc string) *finance {
 	return &finance{bc}
 }
 
-func (f *finance) GET() map[string]interface{} {
+func (f *finance) GET() data.Finance {
 	client := http.Client{}
 	u := "https://api.exchangerate.host/latest"
 	request, err := http.NewRequest("GET", u, nil)
@@ -33,7 +35,7 @@ func (f *finance) GET() map[string]interface{} {
 		fmt.Println(err)
 	}
 
-	var result map[string]interface{}
+	var result data.Finance
 	json.NewDecoder(resp.Body).Decode(&result)
 	return result
 }

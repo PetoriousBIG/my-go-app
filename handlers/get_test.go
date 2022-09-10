@@ -16,7 +16,7 @@ import (
 func Test_GetCountryDataWithValidCountry(t *testing.T) {
 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 	c := NewCountryData(l)
-	expectedAtAGlance := data.AtAGlance{data.CountryHeader{"TST", "Testland", "TS", 1, 0, 0}}
+	expectedAtAGlance := data.AtAGlance{data.CountryHeader{"TST", "Testland", "TS", 1, 0, 0}, data.Finance{}}
 
 	req := httptest.NewRequest("GET", "/", nil)
 	ctx := req.Context()

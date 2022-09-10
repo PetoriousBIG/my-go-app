@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/PetoriousBIG/my-go-app/clients"
 	"github.com/PetoriousBIG/my-go-app/data"
 	"github.com/PetoriousBIG/my-go-app/util"
 )
@@ -41,11 +42,11 @@ func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
 
 func apiMashup(ch data.CountryHeader, cc data.CurrencyCode) *data.AtAGlance {
 
-	//base := cc.Alpha2Code
-	//finance := clients.NewFinacne(base)
-	//retval := finance.GET()
+	base := cc.CurrencyCode
+	finance := clients.NewFinacne(base)
+	exchangeRates := finance.GET()
 
-	output := data.AtAGlance{ch}
+	output := data.AtAGlance{ch, exchangeRates}
 
 	return &output
 }
