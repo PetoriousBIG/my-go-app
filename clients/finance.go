@@ -19,13 +19,13 @@ func NewFinacne(bc string) *finance {
 func (f *finance) GET() data.Finance {
 	client := http.Client{}
 	u := "https://api.exchangerate.host/latest"
+
 	request, err := http.NewRequest("GET", u, nil)
 	values := request.URL.Query()
 	values.Add("base", f.BaseCurrency)
 	request.URL.RawQuery = values.Encode()
 	request.Header.Add("Accept", "application/json")
 
-	fmt.Printf("%v", request.URL)
 	if err != nil {
 		fmt.Println(err)
 	}

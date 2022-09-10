@@ -16,10 +16,21 @@ Testing the API endpoint:
 Should return the following JSON:
 ```
 {
-  "country": "COL",
-  "country_name": "Colombia",
-  "country_id": 170,
-  "average_latitude": 4,
-  "average_longitude": -72
+  "country_header": {
+    "country": "COL",
+    "country_name": "Colombia",
+    "country_id": 170,
+    "average_latitude": 4,
+    "average_longitude": -72
+  },
+  "exchange_rates": {
+    "base": "COP",
+    "rates": {
+      ...
+      "EUR": 0.000226
+      "USD": 0.00023
+      ...
+    }
+  }
 }
 ```
