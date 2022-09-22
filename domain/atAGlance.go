@@ -1,4 +1,10 @@
-package data
+package domain
+
+// Country defines the structure for an API object
+type AtAGlance struct {
+	CountryHeader CountryHeader `json:"country_header"`
+	ExchangeRates Finance       `json:"exchange_rates"`
+}
 
 type CountryHeader struct {
 	Key              string  `json:"country"`

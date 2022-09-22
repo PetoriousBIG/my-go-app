@@ -1,52 +1,44 @@
 package handlers
 
-import (
-	"fmt"
-	"log"
-	"net/http"
+// type Getter func([]interface{}) interface{}
+// type countryData struct {
+// 	l *log.Logger
+// 	g Getter
+// }
 
-	"github.com/PetoriousBIG/my-go-app/clients"
-	"github.com/PetoriousBIG/my-go-app/data"
-	"github.com/PetoriousBIG/my-go-app/util"
-)
+// func NewCountryData(l *log.Logger, g Getter) *countryData {
+// 	return &countryData{l, g}
+// }
 
-type countryData struct {
-	l *log.Logger
-}
+// func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
+// 	valid := r.Context().Value("valid").(bool)
+// 	header := r.Context().Value("header").(data.CountryHeader)
 
-func NewCountryData(l *log.Logger) *countryData {
-	return &countryData{l}
-}
+// 	rw.Header().Add("Content-Type", "application/json")
 
-func (c *countryData) GetCountryData(rw http.ResponseWriter, r *http.Request) {
-	valid := r.Context().Value("valid").(bool)
-	header := r.Context().Value("header").(data.CountryHeader)
+// 	var response any
 
-	rw.Header().Add("Content-Type", "application/json")
+// 	if valid {
+// 		c.l.Println("[DEBUG] getting country data", header)
+// 		rw.WriteHeader(http.StatusOK)
+// 		currency := r.Context().Value("currency").(data.CurrencyCode)
+// 		response = c.g([]interface{header, currency})
+// 	} else {
+// 		c.l.Println("[DEBUG] country not found", header)
+// 		rw.WriteHeader(http.StatusNotFound)
+// 		response = data.ApiError{fmt.Sprintf("country not found, %v", header)}
+// 	}
 
-	var response any
+// 	util.ToJSON(response, rw)
+// }
 
-	if valid {
-		c.l.Println("[DEBUG] getting country data", header)
-		rw.WriteHeader(http.StatusOK)
-		currency := r.Context().Value("currency").(data.CurrencyCode)
-		response = apiMashup(header, currency)
-	} else {
-		c.l.Println("[DEBUG] country not found", header)
-		rw.WriteHeader(http.StatusNotFound)
-		response = data.ApiError{fmt.Sprintf("country not found, %v", header)}
-	}
+// func apiMashup(ch data.CountryHeader, cc data.CurrencyCode) *data.AtAGlance {
 
-	util.ToJSON(response, rw)
-}
+// 	base := cc.CurrencyCode
+// 	finance := clients.NewFinacne(base)
+// 	exchangeRates := finance.GET()
 
-func apiMashup(ch data.CountryHeader, cc data.CurrencyCode) *data.AtAGlance {
+// 	output := data.AtAGlance{ch, exchangeRates}
 
-	base := cc.CurrencyCode
-	finance := clients.NewFinacne(base)
-	exchangeRates := finance.GET()
-
-	output := data.AtAGlance{ch, exchangeRates}
-
-	return &output
-}
+// 	return &output
+// }

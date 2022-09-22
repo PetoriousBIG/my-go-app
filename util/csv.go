@@ -7,10 +7,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/PetoriousBIG/my-go-app/data"
+	"github.com/PetoriousBIG/my-go-app/domain"
 )
 
-func ReadCountryCSV(filepath string) (*map[string]data.CountryHeader, error) {
+func ReadCountryCSV(filepath string) (*map[string]domain.CountryHeader, error) {
 	f, err := os.Open(filepath)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func ReadCountryCSV(filepath string) (*map[string]data.CountryHeader, error) {
 	return &dict, nil
 }
 
-func ReadCurrencyCSV(filepath string) (*map[string]data.CurrencyCode, error) {
+func ReadCurrencyCSV(filepath string) (*map[string]domain.CurrencyCode, error) {
 	f, err := os.Open(filepath)
 	if err != nil {
 		return nil, err
@@ -63,9 +63,9 @@ func readFile(reader io.Reader) ([][]string, error) {
 
 }
 
-func validateCountryDictionary(records [][]string) (map[string]data.CountryHeader, error) {
+func validateCountryDictionary(records [][]string) (map[string]domain.CountryHeader, error) {
 
-	countries := make(map[string]data.CountryHeader)
+	countries := make(map[string]domain.CountryHeader)
 
 	numRows := len(records)
 	if numRows < 1 {
@@ -98,15 +98,15 @@ func validateCountryDictionary(records [][]string) (map[string]data.CountryHeade
 
 		alpha3Code := row[2]
 		alpha2Code := row[1]
-		countries[alpha3Code] = data.CountryHeader{alpha3Code, name, alpha2Code, id, lat, long}
+		countries[alpha3Code] = domain.CountryHeader{alpha3Code, name, alpha2Code, id, lat, long}
 
 	}
 
 	return countries, nil
 }
 
-func validateCurrencyDictionary(records [][]string) (map[string]data.CurrencyCode, error) {
-	currencyCodes := make(map[string]data.CurrencyCode)
+func validateCurrencyDictionary(records [][]string) (map[string]domain.CurrencyCode, error) {
+	currencyCodes := make(map[string]domain.CurrencyCode)
 
 	numRows := len(records)
 	if numRows < 1 {
@@ -124,7 +124,7 @@ func validateCurrencyDictionary(records [][]string) (map[string]data.CurrencyCod
 		alpha2Code := row[1]
 		currencyName := row[2]
 		currencyCode := row[3]
-		currencyCodes[alpha2Code] = data.CurrencyCode{name, alpha2Code, currencyName, currencyCode}
+		currencyCodes[alpha2Code] = domain.CurrencyCode{name, alpha2Code, currencyName, currencyCode}
 
 	}
 
