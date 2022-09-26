@@ -15,6 +15,12 @@ func TestFinance(t *testing.T) {
 			"JPY": 1234.1111,
 			"COP": 4400.1234532,
 		},
+		Success: true,
+		Date:    "2022-09-25",
+		Error: &FinanceError{
+			Code:    200,
+			Message: "all, good",
+		},
 	}
 
 	bytes, err := json.Marshal(request)
@@ -29,18 +35,8 @@ func TestFinance(t *testing.T) {
 	assert.EqualValues(t, result.Rates["EUR"], request.Rates["EUR"])
 	assert.EqualValues(t, result.Rates["JPY"], request.Rates["JPY"])
 	assert.EqualValues(t, result.Rates["COP"], request.Rates["COP"])
-}
-
-func TestFinanceError(t *testing.T) {
-	request := NewFinanceError(400, "Bad Request Error")
-
-	bytes, err := json.Marshal(request)
-	assert.Nil(t, err)
-	assert.NotNil(t, bytes)
-
-	var errResult financeError
-	err = json.Unmarshal(bytes, &errResult)
-	assert.Nil(t, err)
-	assert.EqualValues(t, errResult.Status(), request.Status())
-	assert.EqualValues(t, errResult.Message(), errResult.Message())
+	assert.EqualValues(t, result.Success, request.Success)
+	assert.EqualValues(t, result.Date, request.Date)
+	assert.EqualValues(t, result.Error.Code, request.Error.Code)
+	assert.EqualValues(t, result.Error.Message, request.Error.Message)
 }
