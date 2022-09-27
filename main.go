@@ -1,90 +1,101 @@
 package main
 
-// const HEADER_FILE_PATH = "./countries_codes_and_coordinates.csv"
-// const CURRENCY_FILE_PATH = "./country-code-to-currency-code-mapping.csv"
+import (
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
-// var PORT = os.Getenv("env_port")
+	"github.com/gorilla/mux"
+)
 
-// func main() {
+const HEADER_FILE_PATH = "./countries_codes_and_coordinates.csv"
+const CURRENCY_FILE_PATH = "./country-code-to-currency-code-mapping.csv"
 
-// 	l := log.New(os.Stdout, "my-api ", log.LstdFlags)
+var PORT = os.Getenv("env_port")
 
-// 	// create a new serve mux and register the handlers
-// 	sm := mux.NewRouter()
+func main() {
 
-// 	// create and pass handlers to serve mux
-// 	setHandlers(sm, l)
+	l := log.New(os.Stdout, "my-api ", log.LstdFlags)
 
-// 	portArg := ":" + PORT
+	// create a new serve mux and register the handlers
+	sm := mux.NewRouter()
 
-// 	// create a new server
-// 	s := &http.Server{
-// 		Addr:         portArg,
-// 		Handler:      sm,
-// 		IdleTimeout:  120 * time.Second,
-// 		ReadTimeout:  5 * time.Second,
-// 		WriteTimeout: 10 * time.Second,
-// 	}
+	// create and pass handlers to serve mux
+	setHandlers(sm, l)
 
-// 	// start the server
-// 	go func() {
-// 		l.Println("Starting server on port", PORT)
+	portArg := ":" + PORT
 
-// 		err := s.ListenAndServe()
-// 		if err != nil {
-// 			l.Printf("Error starting server: %s\n", err)
-// 			os.Exit(1)
-// 		}
-// 	}()
+	// create a new server
+	s := &http.Server{
+		Addr:         portArg,
+		Handler:      sm,
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
 
-// 	// trap sigterm or interupt and gracefully shutdown the server
-// 	c := make(chan os.Signal, 1)
-// 	signal.Notify(c, os.Interrupt)
-// 	signal.Notify(c, os.Kill)
+	// start the server
+	go func() {
+		l.Println("Starting server on port", PORT)
 
-// 	// Block until a signal is received
-// 	sig := <-c
-// 	l.Println("Got signal:", sig)
+		err := s.ListenAndServe()
+		if err != nil {
+			l.Printf("Error starting server: %s\n", err)
+			os.Exit(1)
+		}
+	}()
 
-// 	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
-// 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-// 	s.Shutdown(ctx)
-// }
+	// trap sigterm or interupt and gracefully shutdown the server
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Kill)
 
-// func setHandlers(sm *mux.Router, l *log.Logger) {
+	// Block until a signal is received
+	sig := <-c
+	l.Println("Got signal:", sig)
 
-// 	pingRouter := sm.Methods(http.MethodGet).Subrouter()
-// 	apiRouter := sm.Methods(http.MethodGet).Subrouter()
+	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	s.Shutdown(ctx)
+}
 
-// 	// ping
-// 	ping := handlers.NewPing(l)
-// 	pingRouter.HandleFunc("/ping", ping.Get)
+func setHandlers(sm *mux.Router, l *log.Logger) {
 
-// 	// get country data
-// 	countryData := handlers.NewCountryData(l)
-// 	apiRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
-// 	headers, err := util.ReadCountryCSV(HEADER_FILE_PATH)
-// 	if err != nil {
-// 		l.Printf("Error reading csv: %s\n", err)
-// 		os.Exit(1)
-// 	}
+	// pingRouter := sm.Methods(http.MethodGet).Subrouter()
+	// apiRouter := sm.Methods(http.MethodGet).Subrouter()
 
-// 	// get currency data
-// 	currencyCodes, err := util.ReadCurrencyCSV(CURRENCY_FILE_PATH)
-// 	if err != nil {
-// 		l.Printf("Error reading csv: %s\n", err)
-// 		os.Exit(1)
-// 	}
-// 	apiRouter.Use(countryData.GetMiddlewareValidateCountryFunc(*headers, *currencyCodes))
+	// // ping
+	// ping := handlers.NewPing(l)
+	// pingRouter.HandleFunc("/ping", ping.Get)
 
-// 	// not found
-// 	sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-// 		l.Println("[DEBUG] resource not found", r.URL.Path)
+	// // get country data
+	// countryData := handlers.NewCountryData(l)
+	// apiRouter.HandleFunc("/At-A-Glance/{id:[A-Z]{3}}", countryData.GetCountryData)
+	// headers, err := util.ReadCountryCSV(HEADER_FILE_PATH)
+	// if err != nil {
+	// 	l.Printf("Error reading csv: %s\n", err)
+	// 	os.Exit(1)
+	// }
 
-// 		rw.WriteHeader(http.StatusNotFound)
-// 		rw.Header().Add("Content-Type", "application/json")
-// 		json.NewEncoder(rw).Encode(map[string]interface{}{
-// 			"message": "resource not found",
-// 		})
-// 	})
-// }
+	// // get currency data
+	// currencyCodes, err := util.ReadCurrencyCSV(CURRENCY_FILE_PATH)
+	// if err != nil {
+	// 	l.Printf("Error reading csv: %s\n", err)
+	// 	os.Exit(1)
+	// }
+	// apiRouter.Use(countryData.GetMiddlewareValidateCountryFunc(*headers, *currencyCodes))
+
+	// // not found
+	// sm.NotFoundHandler = http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	// 	l.Println("[DEBUG] resource not found", r.URL.Path)
+
+	// 	rw.WriteHeader(http.StatusNotFound)
+	// 	rw.Header().Add("Content-Type", "application/json")
+	// 	json.NewEncoder(rw).Encode(map[string]interface{}{
+	// 		"message": "resource not found",
+	// 	})
+	// })
+}

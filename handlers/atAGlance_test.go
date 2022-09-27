@@ -1,9 +1,34 @@
 package handlers
 
+import (
+	"testing"
+
+	"github.com/PetoriousBIG/my-go-app/domain"
+	"github.com/PetoriousBIG/my-go-app/providers"
+)
+
+var (
+	financeProviderFunc func(r domain.FinanceRequest) *domain.Finance
+)
+
+type financeProviderMock struct{}
+
+//We are mocking the provider method "GetFinance"
+func (fp *financeProviderMock) GetFinance(r domain.FinanceRequest) *domain.Finance {
+	return financeProviderFunc(r)
+}
+
+func TestGetAtAGlanceWithValidCountry(t *testing.T) {
+	financeProviderFunc = func(r domain.FinanceRequest) *domain.Finance {
+		return &domain.Finance{}
+	}
+	providers.FinanceProvider = &financeProviderMock{} // mock applied
+}
+
 // func Test_GetCountryDataWithValidCountry(t *testing.T) {
 // 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 // 	c := NewCountryData(l)
-// 	expectedAtAGlance := domain.AtAGlance{domain.CountryHeader{"TST", "Testland", "TS", 1, 0, 0}, data.Finance{}}
+// 	expectedAtAGlance := domain.AtAGlance{domain.CountryHeader{"TST", "Testland", "TS", 1, 0, 0}, domain.Finance{}}
 
 // 	req := httptest.NewRequest("GET", "/", nil)
 // 	ctx := req.Context()
@@ -27,7 +52,7 @@ package handlers
 // 	l := log.New(os.Stdout, "UNIT TEST ", log.LstdFlags)
 // 	c := NewCountryData(l)
 // 	arg := domain.CountryHeader{"TST", "Testland", "TS", 1, 0, 0}
-// 	expectedHeader := domain.ApiError{"country not found, {TST Testland TS 1 0 0}"}
+// 	expectedHeader := domain.AtAGlanceError{}
 
 // 	req := httptest.NewRequest("GET", "/", nil)
 // 	ctx := req.Context()
@@ -39,7 +64,7 @@ package handlers
 // 	c.GetCountryData(out, req.WithContext(ctx))
 
 // 	actualStatus := out.Result().StatusCode
-// 	var actualHeader data.ApiError
+// 	var actualHeader domain.AtAGlanceError
 // 	util.FromJSON(&actualHeader, out.Body)
 
 // 	assert.Equal(t, http.StatusNotFound, actualStatus)

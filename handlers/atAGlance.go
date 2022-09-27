@@ -1,5 +1,7 @@
 package handlers
 
+type 
+
 // type Getter func([]interface{}) interface{}
 // type countryData struct {
 // 	l *log.Logger
@@ -22,7 +24,7 @@ package handlers
 // 		c.l.Println("[DEBUG] getting country data", header)
 // 		rw.WriteHeader(http.StatusOK)
 // 		currency := r.Context().Value("currency").(data.CurrencyCode)
-// 		response = c.g([]interface{header, currency})
+// 		response = c.g([]interface{header currency})
 // 	} else {
 // 		c.l.Println("[DEBUG] country not found", header)
 // 		rw.WriteHeader(http.StatusNotFound)

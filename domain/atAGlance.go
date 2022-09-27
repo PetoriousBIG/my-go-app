@@ -14,3 +14,6 @@ type CountryHeader struct {
 	AverageLatitude  float64 `json:"average_latitude"`
 	AverageLongitude float64 `json:"average_longitude"`
 }
+
+type AtAGlanceError struct {
+}

@@ -15,12 +15,12 @@ const (
 
 type financeProvider struct{}
 
-type financeService interface {
+type iFinanceProvider interface {
 	GetFinance(request domain.FinanceRequest) *domain.Finance
 }
 
 var (
-	FinanceProvider financeService = &financeProvider{}
+	FinanceProvider iFinanceProvider = &financeProvider{}
 )
 
 func (p *financeProvider) GetFinance(request domain.FinanceRequest) *domain.Finance {
@@ -80,7 +80,7 @@ func (p *financeProvider) GetFinance(request domain.FinanceRequest) *domain.Fina
 			Success: false,
 			Error: &domain.FinanceError{
 				Code:    resp.StatusCode,
-				Message: err.Error(),
+				Message: "",
 			},
 		}
 	}
