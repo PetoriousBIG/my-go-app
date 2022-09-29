@@ -3,7 +3,7 @@ package domain
 // Country defines the structure for an API object
 type AtAGlance struct {
 	CountryHeader CountryHeader `json:"country_header"`
-	ExchangeRates Finance       `json:"exchange_rates"`
+	ExchangeRates Exchange      `json:"exchange_rates"`
 }
 
 type CountryHeader struct {
@@ -13,6 +13,13 @@ type CountryHeader struct {
 	Id               int     `json:"country_id"`
 	AverageLatitude  float64 `json:"average_latitude"`
 	AverageLongitude float64 `json:"average_longitude"`
+}
+
+type CurrencyCode struct {
+	Name         string
+	Alpha2Code   string
+	CurrencyName string
+	CurrencyCode string
 }
 
 type AtAGlanceError struct {

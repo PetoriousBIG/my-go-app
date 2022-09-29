@@ -23,6 +23,7 @@ func TestGetAtAGlanceWithValidCountry(t *testing.T) {
 		return &domain.Finance{}
 	}
 	providers.FinanceProvider = &financeProviderMock{} // mock applied
+
 }
 
 // func Test_GetCountryDataWithValidCountry(t *testing.T) {

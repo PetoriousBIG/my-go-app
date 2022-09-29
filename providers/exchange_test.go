@@ -31,15 +31,13 @@ func TestGetFinanceSuccessfulCall(t *testing.T) {
 	}
 	clients.ClientStruct = &getClientMock{}
 
-	response := FinanceProvider.GetFinance(domain.FinanceRequest{"USD", "abc_123"})
+	response, err := ExchangeProvider.GetExchange(domain.ExchangeRequest{"USD", "abc_123"})
 	assert.NotNil(t, response)
+	assert.Nil(t, err)
 	assert.EqualValues(t, "USD", response.Base)
 	assert.EqualValues(t, 123.55, response.Rates["EUR"])
 	assert.EqualValues(t, 0.0054, response.Rates["JPY"])
-	assert.EqualValues(t, true, response.Success)
 	assert.EqualValues(t, "2022-09-22", response.Date)
-	assert.EqualValues(t, 0, response.Error.Code)
-	assert.EqualValues(t, "", response.Error.Message)
 }
 
 func TestGetFinanceInvalidBase(t *testing.T) {
@@ -51,34 +49,27 @@ func TestGetFinanceInvalidBase(t *testing.T) {
 	}
 	clients.ClientStruct = &getClientMock{}
 
-	response := FinanceProvider.GetFinance(domain.FinanceRequest{"AAA", "abc_123"})
+	response, err := ExchangeProvider.GetExchange(domain.ExchangeRequest{"AAA", "abc_123"})
 
-	assert.NotNil(t, response)
-	assert.EqualValues(t, "", response.Base)
-	assert.Empty(t, response.Rates)
-	assert.EqualValues(t, false, response.Success)
-	assert.EqualValues(t, "", response.Date)
-	assert.EqualValues(t, 201, response.Error.Code)
-	assert.EqualValues(t, "invalid_base_currency", response.Error.Message)
-
+	assert.Nil(t, response)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, 201, err.Code)
+	assert.EqualValues(t, "invalid_base_currency", err.Message)
 }
 
 func TestGetFinanceInvalidAPIKey(t *testing.T) {
 	getRequestFunc = func(r *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusUnauthorized,
-			Body:       ioutil.NopCloser(strings.NewReader(`{"base":"", "rates":{},"success":false, "date":"", "error":{"code":401, "type":""}}`)),
+			Body:       ioutil.NopCloser(strings.NewReader(`{"base":"", "rates":{},"success":false, "date":"", "error":{"code":null, "type":"Invalid authentication credentials"}}`)),
 		}, nil
 	}
 	clients.ClientStruct = &getClientMock{}
 
-	response := FinanceProvider.GetFinance(domain.FinanceRequest{"AAA", "bad_key"})
+	response, err := ExchangeProvider.GetExchange(domain.ExchangeRequest{"AAA", "bad_key"})
 
-	assert.NotNil(t, response)
-	assert.EqualValues(t, "", response.Base)
-	assert.Empty(t, response.Rates)
-	assert.EqualValues(t, false, response.Success)
-	assert.EqualValues(t, "", response.Date)
-	assert.EqualValues(t, 401, response.Error.Code)
-	assert.EqualValues(t, "", response.Error.Message)
+	assert.Nil(t, response)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, 0, err.Code)
+	assert.EqualValues(t, "Invalid authentication credentials", err.Message)
 }

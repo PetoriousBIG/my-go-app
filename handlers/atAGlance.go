@@ -1,7 +1,5 @@
 package handlers
 
-type 
-
 // type Getter func([]interface{}) interface{}
 // type countryData struct {
 // 	l *log.Logger

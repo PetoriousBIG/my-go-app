@@ -1,25 +1,22 @@
 package domain
 
-type Finance struct {
+type Exchange struct {
+	Base  string             `json:"base"`
+	Rates map[string]float64 `json:"rates"`
+	Date  string             `json:"date"`
+}
+type ExchangeResponse struct {
 	Base    string             `json:"base"`
 	Rates   map[string]float64 `json:"rates"`
 	Success bool               `json:"success"`
 	Date    string             `json:"date"`
-	Error   *FinanceError      `json:"error"`
+	Error   ExchangeError      `json:"error"`
 }
-type FinanceRequest struct {
+type ExchangeRequest struct {
 	Base   string `json:"base"`
 	ApiKey string `json:"apikey"`
 }
-
-type FinanceError struct {
+type ExchangeError struct {
 	Code    int    `json:"code"`
 	Message string `json:"type"`
-}
-
-type CurrencyCode struct {
-	Name         string
-	Alpha2Code   string
-	CurrencyName string
-	CurrencyCode string
 }
